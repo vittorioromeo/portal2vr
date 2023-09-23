@@ -2125,9 +2125,12 @@ public:
 class CWeaponPortalBase
 {
 public:
-	char pad_0000[3740]; //0000
+	//char pad_0000[3740]; //0000
+	char pad_0000[300];
+	CBaseEntity* m_hOwner;
+	char pad_0001[3436];
 	int m_iLastFiredPortal; //0xE9C
-};
+}; static_assert(sizeof(CWeaponPortalBase) == 0xEA0);
 
 class C_Portal_Player
 {

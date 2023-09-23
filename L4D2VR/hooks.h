@@ -130,7 +130,9 @@ typedef bool(__thiscall* tCHudCrosshair_ShouldDraw)(void* thisptr);
 typedef void*(__cdecl* tUTIL_Portal_FirstAlongRay)(const Ray_t& ray, float& fMustBeCloserThan);
 typedef float(__cdecl* tUTIL_IntersectRayWithPortal)(const Ray_t& ray, const void* pPortal);
 typedef void(__cdecl* tUTIL_Portal_AngleTransform)(const VMatrix& matThisToLinked, const QAngle& qSource, QAngle& qTransformed);
-
+typedef int(__thiscall* tEntindex)(void* thisptr);
+typedef void*(__thiscall* tGetOwner)(void* thisptr);
+typedef void* (__thiscall* tCWeaponPortalgun_FirePortal)(void* thisptr, bool bPortal2, Vector* pVector);
 
 class Hooks
 {
@@ -196,7 +198,8 @@ public:
 	static inline Hook<tClientThink> hkClientThink;
 	static inline Hook<tPrecache> hkPrecache;
 	static inline Hook<tCHudCrosshair_ShouldDraw> hkCHudCrosshair_ShouldDraw;
-	
+	static inline Hook<tCWeaponPortalgun_FirePortal> hkCWeaponPortalgun_FirePortal;
+
 	//Precache
 
 	Hooks() {};
@@ -280,7 +283,9 @@ public:
 	static void __fastcall dClientThink(void* ecx, void* edx);
 	static void __fastcall dPrecache(void* ecx, void* edx);
 	static bool __fastcall dCHudCrosshair_ShouldDraw(void* ecx, void* edx);
-	
+
+	static void* __fastcall dCWeaponPortalgun_FirePortal(void* ecx, void* edx, bool bPortal2, Vector* pVector = 0);
+
 	static inline int m_PushHUDStep;
 	static inline bool m_PushedHud;
 
@@ -291,5 +296,6 @@ public:
 	static inline tUTIL_Portal_FirstAlongRay UTIL_Portal_FirstAlongRay;
 	static inline tUTIL_IntersectRayWithPortal UTIL_IntersectRayWithPortal;
 	static inline tUTIL_Portal_AngleTransform UTIL_Portal_AngleTransform;
-	
+	static inline tEntindex EntityIndex;
+	static inline tGetOwner GetOwner;
 };

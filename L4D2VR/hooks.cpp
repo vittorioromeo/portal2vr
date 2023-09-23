@@ -233,6 +233,10 @@ int Hooks::initSourceHooks()
 
 	//
 	hkClientThink.createHook((LPVOID)(m_Game->m_Offsets->ClientThink.address), &dClientThink);
+	EntityIndex = (tEntindex)m_Game->m_Offsets->CBaseEntity_entindex.address;
+	GetOwner = (tGetOwner)m_Game->m_Offsets->GetOwner.address;
+
+	hkCWeaponPortalgun_FirePortal.createHook((LPVOID)m_Game->m_Offsets->CWeaponPortalgun_FirePortal.address, &dCWeaponPortalgun_FirePortal);
 
 	return 1;
 } 
@@ -582,7 +586,7 @@ int Hooks::dReadUsercmd(void *buf, CUserCmd *move, CUserCmd *from)
 {
 	hkReadUsercmd.fOriginal(buf, move, from);
 
-	/*int i = m_Game->m_CurrentUsercmdID;
+	int i = m_Game->m_CurrentUsercmdID;
 	if (move->tick_count < 0) // Signal for VR CUserCmd
 	{
 		move->tick_count *= -1;
@@ -613,7 +617,7 @@ int Hooks::dReadUsercmd(void *buf, CUserCmd *move, CUserCmd *from)
 	else
 	{
 		m_Game->m_PlayersVRInfo[i].isUsingVR = false;
-	}*/
+	}
 	return 1;
 }
 
@@ -626,7 +630,7 @@ int Hooks::dWriteUsercmd(void *buf, CUserCmd *to, CUserCmd *from)
 {
 	if (m_VR->m_IsVREnabled)
 	{
-		/*CInput *m_Input = **(CInput ***)(m_Game->m_Offsets->g_pppInput.address);
+		CInput *m_Input = **(CInput ***)(m_Game->m_Offsets->g_pppInput.address);
 		CVerifiedUserCmd *pVerifiedCommands = *(CVerifiedUserCmd **)((uintptr_t)m_Input + 0xF0);
 		CVerifiedUserCmd *pVerified = &pVerifiedCommands[(to->command_number) % 150];
 
@@ -659,13 +663,13 @@ int Hooks::dWriteUsercmd(void *buf, CUserCmd *to, CUserCmd *from)
 		to->tick_count *= -1;
 		to->viewangles.z = 0;
 		to->upmove = 0;
-		to->command_number = originalCommandNum;*/
+		to->command_number = originalCommandNum;
 
 		// Must recalculate checksum for the edited CUserCmd or gunshots will sound
 		// terrible in multiplayer.
 		/*pVerified->m_cmd = *to;
 		pVerified->m_crc = to->GetChecksum();*/
-		//return 1;
+		return 1;
 	}
 	return hkWriteUsercmd.fOriginal(buf, to, from);
 }
@@ -716,15 +720,6 @@ int Hooks::dGetPrimaryAttackActivity(void *ecx, void *edx, void *meleeInfo)
 Vector *Hooks::dEyePosition(void *ecx, void *edx, Vector *eyePos)
 {
 	Vector *result = hkEyePosition.fOriginal(ecx, eyePos);
-	return result;
-}
-
-Vector* Hooks::dWeapon_ShootPosition(void* ecx, void* edx, Vector* eyePos)
-{
-	Vector* result = hkWeapon_ShootPosition.fOriginal(ecx, eyePos);
-
-	*result = m_VR->GetRightControllerAbsPos();
-
 	return result;
 }
 
@@ -840,34 +835,71 @@ DWORD *Hooks::dPrePushRenderTarget(void *ecx, void *edx, int a2)
 	return hkPrePushRenderTarget.fOriginal(ecx, a2);
 }
 
+Vector* Hooks::dWeapon_ShootPosition(void* ecx, void* edx, Vector* eyePos)
+{
+	Vector* result = hkWeapon_ShootPosition.fOriginal(ecx, eyePos);
+
+	int localIndex = m_Game->m_EngineClient->GetLocalPlayer();
+	int index = EntityIndex(ecx);
+
+	auto vrPlayer = m_Game->m_PlayersVRInfo[index];
+
+	if (m_VR->m_IsVREnabled && localIndex == index) {
+		*result = m_VR->GetRightControllerAbsPos();	
+	}
+	else if (vrPlayer.isUsingVR)
+	{
+		*result = vrPlayer.controllerPos;
+	}
+
+	return result;
+}
+
+void* Hooks::dCWeaponPortalgun_FirePortal(void* ecx, void* edx, bool bPortal2, Vector* pVector = 0) {
+	bool wasTrue = m_VR->m_OverrideEyeAngles;
+
+	m_VR->m_OverrideEyeAngles = true;
+
+	auto result = hkCWeaponPortalgun_FirePortal.fOriginal(ecx, bPortal2, pVector);
+
+	if (!wasTrue)
+		m_VR->m_OverrideEyeAngles = false;
+
+	return result;
+}
 
 bool __fastcall Hooks::dTraceFirePortal(void* ecx, void* edx, const Vector& vTraceStart, const Vector& vDirection, bool bPortal2, int iPlacedBy, void* tr) //trace_tx& tr, Vector& vFinalPosition //  , Vector& vFinalPosition, QAngle& qFinalAngles, int iPlacedBy, bool bTest /*= false*/
 {
 	Vector vNewTraceStart = vTraceStart;
 	Vector vNewDirection = vDirection;
 
-	if (m_VR->m_IsVREnabled && iPlacedBy == 2)
-	{
-		vNewTraceStart = m_VR->GetRightControllerAbsPos();
-		vNewDirection = m_VR->m_RightControllerForward;
+	if (iPlacedBy == 2) {
+		int localIndex = m_Game->m_EngineClient->GetLocalPlayer();
 
+		std::cout << "dTraceFirePortal: " << ecx << "\n";
+
+		auto owner = GetOwner(ecx);
+
+		if (owner) {
+			int index = EntityIndex(owner);
+
+			auto vrPlayer = m_Game->m_PlayersVRInfo[index];
+
+			if (m_VR->m_IsVREnabled && localIndex == index) {
+				vNewTraceStart = m_VR->GetRightControllerAbsPos();
+				vNewDirection = m_VR->m_RightControllerForward;
+			}
+			else if (vrPlayer.isUsingVR)
+			{
+				vNewTraceStart = vrPlayer.controllerPos;
+				Vector fwd, rt, up;
+				QAngle::AngleVectors(vrPlayer.controllerAngle, &fwd, &rt, &up);
+				vNewDirection = fwd;
+			}
+		}
 	}
 
 	bool bTraceSucceeded = hkTraceFirePortal.fOriginal(ecx, vNewTraceStart, vNewDirection, bPortal2, iPlacedBy, tr);
-
-	/*if (iPlacedBy == 2 && bTraceSucceeded) {
-		C_Portal_Player* pPortalPlayer = ecx + ;
-
-		if (pPortalPlayer) {
-			pPortalPlayer->m_PointLaser
-			if (bPortal2) {
-
-			}
-			else {
-
-			}
-		}
-	}*/
 
 	return bTraceSucceeded;
 }
@@ -1077,7 +1109,18 @@ void __fastcall Hooks::dRotateObject(void* ecx, void* edx, void* pPlayer, float 
 // This works for release, but why was it crashing before??? TODO: buy a c++ book...
 QAngle& __fastcall Hooks::dEyeAngles(void* ecx, void* edx) {
 	if (m_VR->m_OverrideEyeAngles) {
-		return m_VR->GetRightControllerAbsAngleConst();
+		int localIndex = m_Game->m_EngineClient->GetLocalPlayer();
+		int index = EntityIndex(ecx);
+
+		auto vrPlayer = m_Game->m_PlayersVRInfo[index];
+
+		if (m_VR->m_IsVREnabled && localIndex == index) {
+			return m_VR->GetRightControllerAbsAngleConst();
+		}
+		else if (vrPlayer.isUsingVR)
+		{
+			return vrPlayer.controllerAngle;
+		}
 	}
 	else {
 		return hkEyeAngles.fOriginal(ecx);

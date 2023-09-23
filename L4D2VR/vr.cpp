@@ -1392,7 +1392,9 @@ void VR::ParseConfigFile()
         if (std::getline(sLine, key, '='))
         {
             std::string value;
-            if (std::getline(sLine, value))
+            if (std::getline(sLine, value, '#'))
+                userConfig[key] = value;
+            else if (std::getline(sLine, value))
                 userConfig[key] = value;
         }
     }

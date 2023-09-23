@@ -61,8 +61,10 @@ public:
     Offset PushRenderTargetAndViewport = { "materialsystem.dll", 0x2D5F0, "55 8B EC 83 EC 24 8B 45 08 8B 55 10 89" };
     Offset PopRenderTargetAndViewport =  { "materialsystem.dll", 0x2CE80, "56 8B F1 83 7E 4C 00" };
 
-    Offset TraceFirePortalClient =       { "client.dll", 0x3E0980, "53 8B DC 83 EC 08 83 E4 F0 83 C4 04 55 8B 6B 04 89 6C 24 04 8B EC 81 EC ? ? ? ? 56 57 8B F1 6A" };
+    //Offset TraceFirePortalClient =       { "client.dll", 0x3E0980, "53 8B DC 83 EC 08 83 E4 F0 83 C4 04 55 8B 6B 04 89 6C 24 04 8B EC 81 EC ? ? ? ? 56 57 8B F1 6A" };
+    // Firing Portals
     Offset TraceFirePortalServer =       { "server.dll", 0x400D50, "53 8B DC 83 EC 08 83 E4 F0 83 C4 04 55 8B 6B 04 89 6C 24 04 8B EC 81 EC ? ? ? ? 56 57 8B F1 6A" };
+    Offset CWeaponPortalgun_FirePortal = { "server.dll", 0x401370, "53 8B DC 83 EC 08 83 E4 F0 83 C4 04 55 8B 6B 04 89 6C 24 04 8B EC 81 EC ? ? ? ? 56 57 8B F9 89 7D EC E8 ? ? ? ?" };
 
     //53 8B DC 83 EC 08 83 E4 F0 83 C4 04 55 8B 6B 04 89 6C 24 04 8B EC 81 EC ? ? ? ? 56 57 8B F1 6A 00 56 8D 4D C0 89 75 F8 E8
     //Offset DrawModelExecute =            { "engine.dll", 0xE05E0, "55 8B EC 81 EC ? ? ? ? A1 ? ? ? ? 33 C5 89 45 FC 8B 45 10 56 8B 75 08 57 8B" }; //
@@ -73,23 +75,22 @@ public:
     // Ingame UI
     Offset DrawSelf = { "client.dll", 0x12CC90, "55 8B EC 56 8B F1 80 BE ? ? ? ? ? 0F 84 ? ? ? ? 8B 0D" };
     Offset ClipTransform = { "client.dll", 0x1DD130, "55 8B EC 8B 0D ? ? ? ? 8B 01 8B 90 ? ? ? ? FF D2 8B 4D" };
-    Offset VGui_GetHudBounds = { "client.dll", 0x1CC550, "55 8B EC 51 56 8B 75 08 8B CE" };
+    /*Offset VGui_GetHudBounds = { "client.dll", 0x1CC550, "55 8B EC 51 56 8B 75 08 8B CE" };
     Offset VGui_GetPanelBounds = { "client.dll", 0x1CC350, "55 8B EC 8B 45 08 8B C8 83 E1 1F BA ? ? ? ?" };
 
     Offset VGUI_UpdateScreenSpaceBounds = { "client.dll", 0x1CC8C0, "55 8B EC 83 EC 14 8B 45 0C 8B 4D 10 53 8B 5D 18 56 A3 ? ? ? ? 33 C0" };
     Offset VGui_GetTrueScreenSize = { "client.dll", 0x1CBCF0, "55 8B EC 8B 45 08 8B 0D ? ? ? ? 8B 55 0C 89 08 A1 ? ? ? ? 89 02 5D C3" };
 
     Offset VGui_GetClientDLLRootPanel = { "client.dll", 0x26EDF0, "8B 0D ? ? ? ? 8B 01 8B 90 ? ? ? ? FF D2 8B 04 85 ? ? ? ? 8B 48 04" };
-    Offset g_pFullscreenRootPanel = { "client.dll", 0x26EE20, "A1 ? ? ? ? C3", 2 };
-    //Offset VGui_GetFullscreenRootPanel = { "client.dll", 0x26EE20, "A1 ? ? ? ? C3", 2 };
+    Offset g_pFullscreenRootPanel = { "client.dll", 0x26EE20, "A1 ? ? ? ? C3", 2 };*/
 
     // Pointer laser
     Offset CreatePingPointer = { "client.dll", 0x280660, "55 8B EC 83 EC 14 53 56 8B F1 8B 8E ? ? ? ? 57 85 C9 74 30" };
-    Offset ClientThink = { "client.dll", 0x27EA30, "53 8B DC 83 EC 08 83 E4 F0 83 C4 04 55 8B 6B 04 89 6C 24 04 8B EC 81 EC ? ? ? ?" };
+    //Offset ClientThink = { "client.dll", 0x27EA30, "53 8B DC 83 EC 08 83 E4 F0 83 C4 04 55 8B 6B 04 89 6C 24 04 8B EC 81 EC ? ? ? ?" };
     Offset GetPortalPlayer = { "client.dll", 0x8DCA0, "55 8B EC 8B 45 08 83 F8 FF 75 10 8B 0D ? ? ? ? 8B 01 8B 90 ? ? ? ? FF D2" };
     Offset PrecacheParticleSystem = { "server.dll", 0x16DF40, "55 8B EC 8B 0D ? ? ? ? 8B 55 08 8B 01 8B 40 20 6A 00 6A FF" };
     Offset Precache = { "server.dll", 0x35A2C0, "E8 ? ? ? ? 68 ? ? ? ? E8 ? ? ? ?" };
-    Offset GetActivePortalWeapon = { "client.dll", 0x2A8910, "8B 89 ? ? ? ? 83 F9 FF 74 1F 8B 15 ? ? ? ?" };
+    //Offset GetActivePortalWeapon = { "client.dll", 0x2A8910, "8B 89 ? ? ? ? 83 F9 FF 74 1F 8B 15 ? ? ? ?" };
 
     Offset SetControlPoint = { "client.dll", 0x17BD30, "55 8B EC 53 56 8B 75 0C 57 8B F9 BB ? ? ? ? 84 9F ? ? ? ?" };
     Offset SetDrawOnlyForSplitScreenUser = { "client.dll", 0x17B9E0, "55 8B EC 8B 45 08 53 8B D9 3B 83 ? ? ? ? 74 55" };
@@ -103,7 +104,7 @@ public:
     Offset UTIL_IntersectRayWithPortal = { "server.dll", 0x376730, "55 8B EC 83 EC 48 56 8B 75 0C 85 F6 0F 84 ? ? ? ?" };
     Offset UTIL_Portal_AngleTransform = { "server.dll", 0x375CA0, "55 8B EC 8B 45 08 8B 4D 0C 83 EC 0C 50 51 8D 55 F4" };
 
-    Offset GetScreenSize = { "vguimatsurface.dll", 0xB8C0, "55 8B EC 83 EC 08 80 B9 ? ? ? ? ? 74 1C" };
+    /*Offset GetScreenSize = { "vguimatsurface.dll", 0xB8C0, "55 8B EC 83 EC 08 80 B9 ? ? ? ? ? 74 1C" };
     Offset GetHudSize = { "client.dll", 0x1CBCD0, "55 8B EC 8B 55 0C 8B 0D ? ? ? ? 8B 01 8B 80 ? ? ? ? 52 8B 55 08 52 FF D0 5D C3" };
 
     Offset SetSizeC = { "client.dll", 0x63FB70, "55 8B EC 8B 41 04 8B 50 04 8B 45 0C 56 8B 35 ? ? ? ?" };
@@ -111,14 +112,15 @@ public:
     Offset SetSizeV = { "vguimatsurface.dll", 0x4B6D0, "55 8B EC 8B 41 04 8B 50 04 8B 45 0C 56 8B 35 ? ? ? ?" };
 
     //Offset SetBoundsC = { "client.dll", 0x63FBF0, "55 8B EC 8B 55 0C 53 56 8B F1 8B 46 04 8B 48 04 8B 45 08 57 8B 3D ? ? ? ?" };
-    Offset SetBoundsE = { "engine.dll", 0x2986A0, "55 8B EC 8B 55 0C 53 56 8B F1 8B 46 04 8B 48 04 8B 45 08 57 8B 3D ? ? ? ? 8B 1F 8D 4C 31 04 52 8B 11 50 8B 02 FF D0 8B 53 08 50 8B CF FF D2" };
+    Offset SetBoundsE = { "engine.dll", 0x2986A0, "55 8B EC 8B 55 0C 53 56 8B F1 8B 46 04 8B 48 04 8B 45 08 57 8B 3D ? ? ? ? 8B 1F 8D 4C 31 04 52 8B 11 50 8B 02 FF D0 8B 53 08 50 8B CF FF D2" };*/
    
 
-    Offset Push2DView = { "engine.dll", 0xDF980, "55 8B EC 51 53 8B D9 8B 83 ? ? ? ? 56 8D B3 ? ? ? ? 57 89 5D FC 3B 46 04 7C 09" };
+    /*Offset Push2DView = { "engine.dll", 0xDF980, "55 8B EC 51 53 8B D9 8B 83 ? ? ? ? 56 8D B3 ? ? ? ? 57 89 5D FC 3B 46 04 7C 09" };
     Offset Render = { "client.dll", 0x1D6800, "55 8B EC 81 EC ? ? ? ? 53 56 57 8B F9 8B 0D ? ? ? ? 89 7D F4 FF 15 ? ? ? ?" };
     Offset GetClipRect = { "vguimatsurface.dll", 0x4C700, "55 8B EC 8B 81 ? ? ? ? 8B 50 04 8B 45 14 56 8B 35 ? ? ? ? 57 8B 3E 8D 8C 0A ? ? ? ? 8B 55 10 50" };
     //Offset GetWeaponCrosshairScale = {}
-    Offset GetModeHeight = { "engine.dll", 0x1F9F10, "8B 81 ? ? ? ? C3" };
+    Offset GetModeHeight = { "engine.dll", 0x1F9F10, "8B 81 ? ? ? ? C3" };*/
+
     //Grababbles
     //Offset Weapon_ShootPosition =        { "client.dll", 0x2A8A60, "55 8B EC 8B 01 8B 90 ? ? ? ? 56 8B 75 08 56 FF D2 8B C6 5E 5D C2 04 00" };
     Offset Weapon_ShootPosition = { "server.dll", 0x1033C0, "55 8B EC 8B 01 8B 90 ? ? ? ? 56 8B 75 08 56 FF D2 8B C6 5E 5D C2 04 00" };
@@ -133,4 +135,8 @@ public:
     Offset GetFOV = { "client.dll", 0x2772B0, "55 8B EC 51 56 8B F1 E8 ? ? ? ? D9 5D FC 8B 06 8B 90 ? ? ? ? 8B CE FF D2" };
     Offset GetDefaultFOV = { "client.dll", 0x279020, "A1 ? ? ? ? F3 0F 2C 40 ? C3" };
     Offset GetViewModelFOV = { "client.dll", 0x28AB80, "A1 ? ? ? ? D9 40 2C C3" };
+
+    // Multiplayer
+    Offset GetOwner = { "server.dll", 0xD7550, "8B 81 ? ? ? ? 83 F8 FF 74 23 8B 15 ? ? ? ?" };
+    //Offset GetActiveWeapon = { "server.dll", 0xD3FD0, "8B 89 ? ? ? ? 83 F9 FF 74 1F 8B 15 ? ? ? ?" };
 };

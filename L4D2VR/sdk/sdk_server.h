@@ -639,7 +639,13 @@ class CBaseEntity
 {
 public:
 	virtual ~CBaseEntity() = 0;
-	char pad_0004[340]; //0x0004
+	char pad_0004[20]; //0x0004
+	CBaseEntity* m_hOwnerEntity; //0x0018
+	char pad_001C[68]; //0x001C
+	char* EntityClass; //0x0060
+	char pad_0064[72]; //0x0064
+	char* ModelName; //0x00AC
+	char pad_00B0[168]; //0x00B0
 	void* m_hGroundEntity; //0x0158
 	float m_flGroundChangeTime; //0x015C
 	Vector m_vecBaseVelocity; //0x0160
