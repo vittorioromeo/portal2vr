@@ -2137,8 +2137,8 @@ class C_Portal_Player
 public:
 	inline CWeaponPortalBase* GetActivePortalWeapon() {
 		typedef CWeaponPortalBase* (__thiscall* tGetActivePortalWeapon)(void* thisptr);
-		static tGetActivePortalWeapon oGetActivePortalWeapon = (tGetActivePortalWeapon)(g_Game->m_Offsets->GetActivePortalWeapon.address);
-
+		//static tGetActivePortalWeapon oGetActivePortalWeapon = (tGetActivePortalWeapon)(g_Game->m_Offsets->GetActivePortalWeapon.address);
+		static tGetActivePortalWeapon oGetActivePortalWeapon = (tGetActivePortalWeapon)(*(uintptr_t*)this + 968);
 		return oGetActivePortalWeapon(this);
 	};
 

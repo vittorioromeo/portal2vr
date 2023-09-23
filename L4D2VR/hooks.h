@@ -37,6 +37,9 @@ struct Hook {
 
 	int enableHook()
 	{
+		if (!pTarget)
+			throw std::invalid_argument("pTarget is empty, did you miss a call to createHook?");
+
 		MH_STATUS status = MH_EnableHook(pTarget);
 		if (status != MH_OK)
 		{

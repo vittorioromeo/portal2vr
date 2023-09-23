@@ -31,42 +31,17 @@ Hooks::Hooks(Game *game)
 	//hkWriteUsercmdDeltaToBuffer.enableHook();
 	hkWriteUsercmd.enableHook();
 
-	//hkAdjustEngineViewport.enableHook();
-	//hkViewport.enableHook();
-	//hkGetViewport.enableHook();
-
 	hkCreateMove.enableHook();
-
 	hkEyePosition.enableHook();
-
-	//hkDrawModelExecute.enableHook();
 	hkRenderView.enableHook();
 
-	/*hkPushRenderTargetAndViewport.enableHook();
-	hkPopRenderTargetAndViewport.enableHook();*/
-	//hkVgui_Paint.enableHook();
-	/*hkIsSplitScreen.enableHook();
-	hkPrePushRenderTarget.enableHook();*/
-	//hkGetFullScreenTexture.enableHook();
 
 	hkWeapon_ShootPosition.enableHook();
 	hkTraceFirePortal.enableHook();
+	hkCWeaponPortalgun_FirePortal.enableHook();
+
 	hkDrawSelf.enableHook();
 	hkPlayerPortalled.enableHook();
-
-	//hkGetModeHeight.enableHook();
-	/*hkVGui_GetHudBounds.enableHook();
-	hkVGui_GetPanelBounds.enableHook();
-	hkVGUI_UpdateScreenSpaceBounds.enableHook();
-	hkSetBounds.enableHook();
-	hkSetSize.enableHook();
-	hkGetScreenSize.enableHook();
-	hkGetHudSize.enableHook();*/
-
-	//hkPush2DView.enableHook();
-	//hkRender.enableHook();
-
-	//hkGetClipRect.enableHook();
 
 	//hkComputeError.enableHook();
 	hkUpdateObject.enableHook();
@@ -79,7 +54,7 @@ Hooks::Hooks(Game *game)
 	hkGetViewModelFOV.enableHook();
 
 	hkSetDrawOnlyForSplitScreenUser.enableHook();
-	hkClientThink.enableHook();
+	//kClientThink.enableHook();
 	hkPrecache.enableHook();
 	hkCHudCrosshair_ShouldDraw.enableHook();
 }
@@ -155,6 +130,8 @@ int Hooks::initSourceHooks()
 	LPVOID TraceFirePortalAddr = (LPVOID)(m_Game->m_Offsets->TraceFirePortalServer.address);
 	hkTraceFirePortal.createHook(TraceFirePortalAddr, &dTraceFirePortal);
 
+	hkCWeaponPortalgun_FirePortal.createHook((LPVOID)m_Game->m_Offsets->CWeaponPortalgun_FirePortal.address, &dCWeaponPortalgun_FirePortal);
+
 	LPVOID DrawSelfAddr = (LPVOID)(m_Game->m_Offsets->DrawSelf.address);
 	hkDrawSelf.createHook(DrawSelfAddr, &dDrawSelf);
 	
@@ -169,45 +146,8 @@ int Hooks::initSourceHooks()
 	UTIL_IntersectRayWithPortal = (tUTIL_IntersectRayWithPortal)m_Game->m_Offsets->UTIL_IntersectRayWithPortal.address;
 	UTIL_Portal_AngleTransform = (tUTIL_Portal_AngleTransform)m_Game->m_Offsets->UTIL_Portal_AngleTransform.address;
 
-	/*void *clientMode = nullptr;
-	while (!clientMode)
-	{
-		Sleep(10);
-		clientMode = **(void ***)(m_Game->m_Offsets->g_pClientMode.address);
-	}
-
-	hkCreateMove.createHook( (*(void ***)clientMode)[23], dCreateMove );*/
-
 	LPVOID CreateMoveAddr = (LPVOID)(m_Game->m_Offsets->CreateMove.address);
 	hkCreateMove.createHook(CreateMoveAddr, &dCreateMove);
-	
-	LPVOID VGui_GetHudBoundsAddr = (LPVOID)(m_Game->m_Offsets->VGui_GetHudBounds.address);
-	hkVGui_GetHudBounds.createHook(VGui_GetHudBoundsAddr, &dVGui_GetHudBounds);
-
-	hkVGui_GetPanelBounds.createHook((LPVOID)(m_Game->m_Offsets->VGui_GetPanelBounds.address), &dVGui_GetPanelBounds);
-	
-	hkVGUI_UpdateScreenSpaceBounds.createHook((LPVOID)(m_Game->m_Offsets->VGUI_UpdateScreenSpaceBounds.address), &dVGUI_UpdateScreenSpaceBounds);
-	hkVGui_GetTrueScreenSize.createHook((LPVOID)(m_Game->m_Offsets->VGui_GetTrueScreenSize.address), &dVGui_GetTrueScreenSize);
-
-	//hkSetBounds.createHook((LPVOID)m_Game->m_Offsets->SetBoundsC.address, &dSetBounds);
-	hkSetBounds.createHook((LPVOID)m_Game->m_Offsets->SetBoundsE.address, &dSetBounds);
-
-	//hkSetSize.createHook((LPVOID)(m_Game->m_Offsets->SetSizeC.address), &dSetSize);
-	//hkSetSize.createHook((LPVOID)(m_Game->m_Offsets->SetSizeE.address), &dSetSize);
-	hkSetSize.createHook((LPVOID)(m_Game->m_Offsets->SetSizeV.address), &dSetSize);
-
-	hkGetScreenSize.createHook((LPVOID)(m_Game->m_Offsets->GetScreenSize.address), &dGetScreenSize);
-	hkGetHudSize.createHook((LPVOID)(m_Game->m_Offsets->GetHudSize.address), &dGetHudSize);
-
-	LPVOID Push2DViewAddr = (LPVOID)(m_Game->m_Offsets->Push2DView.address);
-	hkPush2DView.createHook(Push2DViewAddr, &dPush2DView);
-
-	LPVOID RenderAddr = (LPVOID)(m_Game->m_Offsets->Render.address);
-	hkRender.createHook(RenderAddr, &dRender);
-
-	hkGetClipRect.createHook((LPVOID)(m_Game->m_Offsets->GetClipRect.address), &dGetClipRect);
-
-	hkGetModeHeight.createHook((LPVOID)(m_Game->m_Offsets->GetModeHeight.address), &dGetModeHeight);
 
 	// Grababbles
 	hkComputeError.createHook((LPVOID)(m_Game->m_Offsets->ComputeError.address), &dComputeError);
@@ -232,11 +172,8 @@ int Hooks::initSourceHooks()
 	hkCHudCrosshair_ShouldDraw.createHook((LPVOID)m_Game->m_Offsets->CHudCrosshair_ShouldDraw.address, &dCHudCrosshair_ShouldDraw);
 
 	//
-	hkClientThink.createHook((LPVOID)(m_Game->m_Offsets->ClientThink.address), &dClientThink);
 	EntityIndex = (tEntindex)m_Game->m_Offsets->CBaseEntity_entindex.address;
 	GetOwner = (tGetOwner)m_Game->m_Offsets->GetOwner.address;
-
-	hkCWeaponPortalgun_FirePortal.createHook((LPVOID)m_Game->m_Offsets->CWeaponPortalgun_FirePortal.address, &dCWeaponPortalgun_FirePortal);
 
 	return 1;
 } 
@@ -298,21 +235,9 @@ void __fastcall Hooks::dRenderView(void *ecx, void *edx, CViewSetup &setup, CVie
 	if (m_Game->m_VguiSurface->IsCursorVisible())
 		return hkRenderView.fOriginal(ecx, setup, hudViewSetup, nClearFlags, whatToDraw);
 
-	VPanel* g_pFullscreenRootPanel = *(VPanel**)(m_Game->m_Offsets->g_pFullscreenRootPanel.address);
-
-	/*int w, h;
-	g_pFullscreenRootPanel->GetSize(w, h);*/
+	//VPanel* g_pFullscreenRootPanel = *(VPanel**)(m_Game->m_Offsets->g_pFullscreenRootPanel.address);
 
 	IMaterialSystem* matSystem = m_Game->m_MaterialSystem;
-
-	/*int windowWidth, windowHeight;
-	m_Game->m_MaterialSystem->GetRenderContext()->GetWindowSize(windowWidth, windowHeight);*/
-
-	/*hudViewSetup.x = m_VR->m_RenderWidth - windowWidth;
-	hudViewSetup.y = m_VR->m_RenderHeight - windowHeight;*/
-
-	/*hudViewSetup.x = 500;
-	hudViewSetup.y = 250;*/
 
 	hudViewSetup.width = m_VR->m_RenderWidth;
 	hudViewSetup.height = m_VR->m_RenderHeight;
@@ -329,8 +254,6 @@ void __fastcall Hooks::dRenderView(void *ecx, void *edx, CViewSetup &setup, CVie
 		Vector vec = position - m_VR->m_SetupOrigin;
 		float distance = sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 
-		//std::cout << "dRenderView: " << distance << "\n";
-		
 		// Rudimentary portalling detection
 		if (distance > 35) {
 			//m_VR->m_RotationOffset.x += m_VR->m_PortalRotationOffset.x;
@@ -379,10 +302,6 @@ void __fastcall Hooks::dRenderView(void *ecx, void *edx, CViewSetup &setup, CVie
 	rndrContext->Release();
 	hkRenderView.fOriginal(ecx, leftEyeView, hudViewSetup, nClearFlags, whatToDraw);
 	
-	//m_VR->m_HUDTexture
-
-	//std::cout << "dRenderView - Left End\n";
-
 	// Right eye CViewSetup
 	tempAngle = QAngle(setup.angles.x, setup.angles.y, setup.angles.z);
 	rightEyeView.origin = m_VR->TraceEye((uint32_t*)localPlayer, position, m_VR->GetViewOriginRight(position), tempAngle);
@@ -393,7 +312,6 @@ void __fastcall Hooks::dRenderView(void *ecx, void *edx, CViewSetup &setup, CVie
 	rndrContext->SetRenderTarget(m_VR->m_RightEyeTexture);
 	rndrContext->Release();
 	hkRenderView.fOriginal(ecx, rightEyeView, hudViewSetup, nClearFlags, whatToDraw);
-	//std::cout << "dRenderView - Right End\n";
 
 	m_PushedHud = false;
 
@@ -855,7 +773,7 @@ Vector* Hooks::dWeapon_ShootPosition(void* ecx, void* edx, Vector* eyePos)
 	return result;
 }
 
-void* Hooks::dCWeaponPortalgun_FirePortal(void* ecx, void* edx, bool bPortal2, Vector* pVector = 0) {
+void* Hooks::dCWeaponPortalgun_FirePortal(void* ecx, void* edx, bool bPortal2, Vector* pVector) {
 	bool wasTrue = m_VR->m_OverrideEyeAngles;
 
 	m_VR->m_OverrideEyeAngles = true;
@@ -875,8 +793,6 @@ bool __fastcall Hooks::dTraceFirePortal(void* ecx, void* edx, const Vector& vTra
 
 	if (iPlacedBy == 2) {
 		int localIndex = m_Game->m_EngineClient->GetLocalPlayer();
-
-		std::cout << "dTraceFirePortal: " << ecx << "\n";
 
 		auto owner = GetOwner(ecx);
 

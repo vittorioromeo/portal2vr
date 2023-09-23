@@ -79,10 +79,10 @@ public:
     Offset VGui_GetPanelBounds = { "client.dll", 0x1CC350, "55 8B EC 8B 45 08 8B C8 83 E1 1F BA ? ? ? ?" };
 
     Offset VGUI_UpdateScreenSpaceBounds = { "client.dll", 0x1CC8C0, "55 8B EC 83 EC 14 8B 45 0C 8B 4D 10 53 8B 5D 18 56 A3 ? ? ? ? 33 C0" };
-    Offset VGui_GetTrueScreenSize = { "client.dll", 0x1CBCF0, "55 8B EC 8B 45 08 8B 0D ? ? ? ? 8B 55 0C 89 08 A1 ? ? ? ? 89 02 5D C3" };
+    Offset VGui_GetTrueScreenSize = { "client.dll", 0x1CBCF0, "55 8B EC 8B 45 08 8B 0D ? ? ? ? 8B 55 0C 89 08 A1 ? ? ? ? 89 02 5D C3" };*/
 
     Offset VGui_GetClientDLLRootPanel = { "client.dll", 0x26EDF0, "8B 0D ? ? ? ? 8B 01 8B 90 ? ? ? ? FF D2 8B 04 85 ? ? ? ? 8B 48 04" };
-    Offset g_pFullscreenRootPanel = { "client.dll", 0x26EE20, "A1 ? ? ? ? C3", 2 };*/
+    Offset g_pFullscreenRootPanel = { "client.dll", 0x26EE20, "A1 ? ? ? ? C3", 2 };
 
     // Pointer laser
     Offset CreatePingPointer = { "client.dll", 0x280660, "55 8B EC 83 EC 14 53 56 8B F1 8B 8E ? ? ? ? 57 85 C9 74 30" };
