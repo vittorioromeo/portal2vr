@@ -661,46 +661,22 @@ void VR::ProcessInput()
         // Last valid yaw angle, in case we need to revert to it.
         const float lastYaw = m_RotationOffset.y;
 
-        // Get normalized forward direction vector from current rotation offset:
-        Vector fwdSrc;
-        QAngle::AngleVectors(m_RotationOffset, &fwdSrc, nullptr, nullptr);
-        VectorNormalize(fwdSrc);
-
-        // Get normalized forward direction vector from target rotation offset:
         const QAngle targetRotation(0, lastYaw, 0);
-        Vector fwdTarget;
-        QAngle::AngleVectors(targetRotation, &fwdTarget, nullptr, nullptr);
-        VectorNormalize(fwdTarget);
 
-        // Slerp taken from `glm/rotate_vector.inl`:
-        const auto slerp = [](const Vector& x, const Vector& y, float a) -> Vector {
-            // get cosine of angle between vectors (-1 -> 1)
-            auto CosAlpha = DotProduct(x, y);
-            // get angle (0 -> pi)
-            auto Alpha = std::acos(CosAlpha);
-            // get sine of angle between vectors (0 -> 1)
-            auto SinAlpha = std::sin(Alpha);
-            // this breaks down when SinAlpha = 0, i.e. Alpha = 0 or pi
-
-            if (SinAlpha == 0.f) {
-                return y;
-            }
-
-            auto t1 = std::sin((1.f - a) * Alpha) / SinAlpha;
-            auto t2 = std::sin(a * Alpha) / SinAlpha;
-
-            // interpolate src vectors
-            return x * t1 + y * t2;
+        const auto lerp = [](float a, float b, float f) -> float {
+            return a * (1.0 - f) + (b * f);
         };
 
-        // Calculate slerp between source and target direction vectors:
-        Vector slerped = slerp(fwdSrc, fwdTarget, m_CameraUprightRecoverySpeed);
-        VectorNormalize(slerped);
+        float lerpedPitch = lerp(m_RotationOffset.x, targetRotation.x, m_CameraUprightRecoverySpeed);
+        float lerpedYaw = lerp(m_RotationOffset.y, targetRotation.y, m_CameraUprightRecoverySpeed);
+        float lerpedRoll = lerp(m_RotationOffset.z, targetRotation.z, m_CameraUprightRecoverySpeed);
 
-        // Turn the final direction vector into Euler angles and apply it:
-        QAngle finalAngles;
-        QAngle::VectorAngles(slerped, finalAngles);
-        m_RotationOffset = finalAngles;
+        m_RotationOffset = QAngle(lerpedPitch, lerpedYaw, lerpedRoll);
+
+        if (abs(m_RotationOffset.x) < 0.0001)
+            m_RotationOffset.x = 0;
+        if (abs(m_RotationOffset.z) < 0.0001)
+            m_RotationOffset.z = 0;
 
         // Just in case any calculation went awry, revert to an upright vector:
         if (std::isnan(m_RotationOffset.x) || std::isnan(m_RotationOffset.y) || std::isnan(m_RotationOffset.z))
